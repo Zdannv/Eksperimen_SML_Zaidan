@@ -1,17 +1,18 @@
-
 import os
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-def preprocess(input_path, output_path="processed_wine.csv"):
-    df = pd.read_csv(input_path, sep=";")
+
+def preprocess(input_path, output_path="processed_heart.csv"):
+    df = pd.read_csv(input_path)
+    df.columns = df.columns.str.replace('\ufeff', '')
 
     # Remove duplicates
     df = df.drop_duplicates().reset_index(drop=True)
 
     # Separate features and target
-    X = df.drop("quality", axis=1)
-    y = df["quality"]
+    X = df.drop("target", axis=1)
+    y = df["target"]
 
     # Scale numerical features
     scaler = StandardScaler()
@@ -21,7 +22,7 @@ def preprocess(input_path, output_path="processed_wine.csv"):
     )
 
     processed = X_scaled.copy()
-    processed["quality"] = y.values
+    processed["target"] = y.values
 
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     processed.to_csv(output_path, index=False)
@@ -31,6 +32,6 @@ def preprocess(input_path, output_path="processed_wine.csv"):
 
 
 if __name__ == "__main__":
-    INPUT = "../raw_dataset/winequality-red.csv"
-    OUTPUT = "processed_wine.csv"
+    INPUT = "../raw_dataset/heart.csv"
+    OUTPUT = "processed_heart.csv"
     preprocess(INPUT, OUTPUT)
